@@ -304,7 +304,8 @@
         "delete_confirm": "Apakah Anda yakin ingin menghapus merek ini?",
         "deleted": "Merek berhasil dihapus",
         "created": "Merek berhasil dibuat",
-        "updated": "Merek berhasil diperbarui"
+        "updated": "Merek berhasil diperbarui",
+        "search_placeholder": "Cari merek..."
     },
     "laptop_sources": {
         "title": "Sumber Laptop",
@@ -321,7 +322,8 @@
         "delete_confirm": "Apakah Anda yakin ingin menghapus sumber ini?",
         "deleted": "Sumber berhasil dihapus",
         "created": "Sumber berhasil dibuat",
-        "updated": "Sumber berhasil diperbarui"
+        "updated": "Sumber berhasil diperbarui",
+        "search_placeholder": "Cari sumber..."
     },
     "laptops": {
         "title": "Laptop",
