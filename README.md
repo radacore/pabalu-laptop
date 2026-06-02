@@ -22,7 +22,7 @@ A laptop inventory and service management system built with Laravel + React (Ine
 | Frontend | React 19, Inertia.js 2, TypeScript 5 |
 | UI | Tailwind CSS 4, Base UI React, lucide-react icons |
 | State | zustand, Inertia useForm |
-| Database | SQLite (default), MySQL, PostgreSQL |
+| Database | MySQL |
 | Charts | recharts (AreaChart) |
 | Image | PHP GD (built-in WebP compression) |
 | I18n | react-i18next, i18next, mcamara/laravel-localization |
@@ -34,7 +34,7 @@ A laptop inventory and service management system built with Laravel + React (Ine
 - PHP 8.2+
 - Composer
 - Node.js 20+
-- SQLite (default) or MySQL/PostgreSQL
+- MySQL 8.0+
 - PHP GD extension (for image uploads)
 
 ## Quick Start
