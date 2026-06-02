@@ -22,3 +22,13 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Infra / agent runtime (not part of project)
+.husky/
+.playwright-mcp/
+.sisyphus/
+
+# Project-level docs (not part of source)
+prd.md
+selia.json
+HOW_TO_DEVELOP.md

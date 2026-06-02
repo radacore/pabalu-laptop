@@ -1,8 +1,110 @@
-## TL;DR
+# Pabalu Laptop
+
+A laptop inventory and service management system built with Laravel + React (Inertia.js). Tracks laptop stock, service/repair orders, customers, and financial transactions with role-based access and multi-language support (English/Indonesian).
+
+## Features
+
+- **Laptop Inventory** -- Full CRUD with brand/source classification, hardware specs (processor, RAM, storage, GPU, display, etc.), condition tracking (new/used/refurbished/for parts), status (available/sold), and multi-photo upload with automatic WebP compression
+- **Service Management** -- Service request tracking with status lifecycle, technician updates, parts management, and photo attachments
+- **Customer Management** -- Customer directory with service history
+- **Financial Transactions** -- Income and expense records
+- **Dashboard** -- Monthly income/expense chart (3/6/12 month range), recent service and transaction summaries
+- **Role-Based Access Control** -- Super Admin, Admin, and Customer roles with granular permission management
+- **Public Service Tracking** -- Anyone can look up service status by tracking code
+- **Multi-Language** -- Full English and Indonesian translations via i18next + `mcamara/laravel-localization`
+- **Responsive UI** -- Tailwind CSS 4 + Base UI components, mobile-friendly with dedicated desktop/mobile views
+
+## Tech Stack
+
+| Layer | Stack |
+|---|---|
+| Backend | Laravel 12, PHP 8.2 |
+| Frontend | React 19, Inertia.js 2, TypeScript 5 |
+| UI | Tailwind CSS 4, Base UI React, lucide-react icons |
+| State | zustand, Inertia useForm |
+| Database | SQLite (default), MySQL, PostgreSQL |
+| Charts | recharts (AreaChart) |
+| Image | PHP GD (built-in WebP compression) |
+| I18n | react-i18next, i18next, mcamara/laravel-localization |
+| Testing | Pest PHP |
+| Tooling | Vite, TypeScript, Pint (Laravel code style) |
+
+## Requirements
+
+- PHP 8.2+
+- Composer
+- Node.js 20+
+- SQLite (default) or MySQL/PostgreSQL
+- PHP GD extension (for image uploads)
+
+## Quick Start
 
 ```bash
-laravel new app --using=yuisalabs/selia-laravel
+git clone <repo-url>
+cd pabalu-laptop
+
+# Backend
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan storage:link
+
+# Frontend
+npm install
+npm run build
 ```
+
+### Development
+
+```bash
+# Start both PHP server and Vite dev server concurrently
+composer run dev
+
+# Or separately:
+php artisan serve    # http://localhost:8000
+npm run dev         # Vite hot reload
+```
+
+> Routes use localization prefixes. Access via `http://localhost:8000/en/...` or `http://localhost:8000/id/...`. After modifying routes, run `php artisan route:trans:cache`.
+
+### Default Account
+
+| Role | Email | Password |
+|---|---|---|
+| Super Admin | superadmin@yuisalabs.dev | superadmin |
+
+## Image Uploads
+
+Laptop and service photos are automatically compressed to WebP (quality 80) via PHP's built-in GD library. No external image packages required. Files are stored at `storage/app/public/laptop-photos/` and served through the `/storage` symlink. Max file size is 5 MB per image.
+
+## Project Structure
+
+```
+app/
+  Http/
+    Controllers/        -- Inertia-based controllers
+    Requests/           -- Form request validation
+  Models/               -- Eloquent models
+  Services/             -- Business logic (LaptopService, etc.)
+  Helpers/              -- Utility helpers (ImageHelper)
+database/
+  migrations/           -- Database schema
+  seeders/              -- Seed data (roles, permissions, brands)
+resources/js/
+  Components/           -- Shared reusable components (form fields, UI kit)
+  Features/             -- Feature modules (laptop, service, customer, ...)
+  Layouts/              -- Page layouts (authenticated, guest)
+  Pages/                -- Inertia page components
+  Stores/               -- Zustand state stores
+  Utils/                -- Utility helpers (cn, etc.)
+lang/                   -- Translation files (en.json, id.json)
+routes/                 -- Web routes (localized with locale prefix)
+```
+
+## Public Tracking
+
+Customers can track their service status without logging in at `/en/track` or `/id/track` using the tracking code provided at service creation.
 
 Make sure to update your `APP_URL` in the `.env` file before using the route function. Then, run `npm run dev` to generate and watch routes properly during development.
 
