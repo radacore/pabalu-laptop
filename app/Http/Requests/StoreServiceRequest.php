@@ -42,7 +42,8 @@ class StoreServiceRequest extends FormRequest
             'parts.*.part_name' => 'required_with:parts|string|max:255',
             'parts.*.quantity' => 'required_with:parts|integer|min:1',
             'parts.*.unit_price' => 'required_with:parts|numeric|min:0',
-            'photo_path' => 'nullable|string',
+            'photos' => 'nullable|array',
+            'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ];
     }
 }

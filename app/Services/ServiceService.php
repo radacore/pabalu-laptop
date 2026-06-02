@@ -2,11 +2,15 @@
 
 namespace App\Services;
 
+use App\Helpers\ImageHelper;
 use App\Models\Service;
+use App\Models\ServicePhoto;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -87,7 +91,7 @@ class ServiceService extends BaseService
     }
 
     /**
-     * Store a service with its initial update, parts, and photo path.
+     * Store a service with its initial update, parts, and photos.
      */
     public function store(array $data): Model
     {
@@ -95,7 +99,7 @@ class ServiceService extends BaseService
             $this->beforeStore($data);
 
             $partsData = $this->extractPartsData($data);
-            $photoPath = $this->extractPhotoPath($data);
+            $photos = $this->extractUploadedPhotos($data);
             $data['tracking_code'] = $this->generateTrackingCode();
             $data['status'] = 'received';
 
@@ -116,8 +120,8 @@ class ServiceService extends BaseService
                 $service->parts()->createMany($partsData);
             }
 
-            if (filled($photoPath)) {
-                $service->photos()->create(['photo_path' => $photoPath]);
+            foreach ($photos as $path) {
+                $service->photos()->create(['photo_path' => $path]);
             }
 
             return $service->load(['customer', 'laptop', 'serviceCategory', 'updates', 'parts', 'photos']);
@@ -125,7 +129,7 @@ class ServiceService extends BaseService
     }
 
     /**
-     * Update a service with status log, synced parts, and photo path.
+     * Update a service with status log, synced parts, and photos.
      *
      * @param  Service  $model
      */
@@ -135,8 +139,8 @@ class ServiceService extends BaseService
             $this->beforeUpdate($model, $data);
 
             $partsData = $this->extractPartsData($data);
-            $hasPhotoPath = array_key_exists('photo_path', $data);
-            $photoPath = $this->extractPhotoPath($data);
+            $newPhotos = $this->extractUploadedPhotos($data);
+            $deletedPhotoIds = $this->extractDeletedPhotoIds($data);
             $oldStatus = $model->status;
 
             $model->update($data);
@@ -152,18 +156,16 @@ class ServiceService extends BaseService
                 $model->parts()->createMany($partsData);
             }
 
-            if ($hasPhotoPath) {
-                $primaryPhoto = $model->photos()->oldest()->first();
-
-                if (filled($photoPath)) {
-                    if ($primaryPhoto) {
-                        $primaryPhoto->update(['photo_path' => $photoPath]);
-                    } else {
-                        $model->photos()->create(['photo_path' => $photoPath]);
-                    }
-                } elseif ($primaryPhoto) {
-                    $primaryPhoto->delete();
+            foreach ($deletedPhotoIds as $id) {
+                $photo = ServicePhoto::find($id);
+                if ($photo) {
+                    Storage::disk('public')->delete($photo->photo_path);
+                    $photo->delete();
                 }
+            }
+
+            foreach ($newPhotos as $path) {
+                $model->photos()->create(['photo_path' => $path]);
             }
 
             return $model->load(['customer', 'laptop', 'serviceCategory', 'updates', 'parts', 'photos']);
@@ -189,7 +191,7 @@ class ServiceService extends BaseService
     }
 
     /**
-     * Hook: Before deleting - remove related records.
+     * Hook: Before deleting - remove related files and records.
      *
      * @param  Service  $service
      */
@@ -197,6 +199,11 @@ class ServiceService extends BaseService
     {
         $service->updates()->delete();
         $service->parts()->delete();
+
+        foreach ($service->photos as $photo) {
+            Storage::disk('public')->delete($photo->photo_path);
+        }
+
         $service->photos()->delete();
     }
 
@@ -228,17 +235,6 @@ class ServiceService extends BaseService
         );
     }
 
-    private function createStatusUpdate(Service $service, ?string $oldStatus, string $newStatus): void
-    {
-        $service->updates()->create([
-            'user_id' => Auth::id(),
-            'content' => "Status changed from {$oldStatus} to {$newStatus}",
-            'old_status' => $oldStatus,
-            'new_status' => $newStatus,
-            'is_customer_visible' => true,
-        ]);
-    }
-
     /**
      * @return array<int, array{part_name: string, quantity: int, unit_price: mixed}>
      */
@@ -258,11 +254,40 @@ class ServiceService extends BaseService
             ->all();
     }
 
-    private function extractPhotoPath(array &$data): ?string
+    private function createStatusUpdate(Service $service, ?string $oldStatus, string $newStatus): void
     {
-        $photoPath = $data['photo_path'] ?? null;
-        unset($data['photo_path']);
+        $service->updates()->create([
+            'user_id' => Auth::id(),
+            'content' => "Status changed from {$oldStatus} to {$newStatus}",
+            'old_status' => $oldStatus,
+            'new_status' => $newStatus,
+            'is_customer_visible' => true,
+        ]);
+    }
 
-        return $photoPath;
+    private function extractUploadedPhotos(array &$data): array
+    {
+        $files = $data['photos'] ?? [];
+        unset($data['photos']);
+
+        $paths = [];
+
+        if (is_array($files)) {
+            foreach ($files as $file) {
+                if ($file instanceof UploadedFile && $file->isValid()) {
+                    $paths[] = ImageHelper::compressToWebp($file, 'service-photos');
+                }
+            }
+        }
+
+        return $paths;
+    }
+
+    private function extractDeletedPhotoIds(array &$data): array
+    {
+        $ids = $data['deleted_photos'] ?? [];
+        unset($data['deleted_photos']);
+
+        return array_map('intval', (array) $ids);
     }
 }

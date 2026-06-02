@@ -8,6 +8,7 @@ import { Link, useForm } from '@inertiajs/react';
 import { LucideCirclePlus, LucideCircleX, LucideSave, LucideTrash2 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useConfirmDialogStore } from '@/stores/confirm-dialog-store';
+import { PhotoUpload } from '@/features/laptop/photo-upload';
 import type { Service, ServiceOption, ServicePart, ServiceStatusOption } from './types';
 
 interface ServiceFormProps {
@@ -41,14 +42,15 @@ interface ServiceFormData {
     completion_date: string;
     notes: string;
     parts: PartFormData[];
-    photo_path: string;
+    photos: File[];
+    deleted_photos: number[];
 }
 
 export function ServiceForm({ customers, laptops, serviceCategories, statuses, service, mode = 'create' }: ServiceFormProps) {
     const { t } = useTranslation();
     const isEditMode = mode === 'edit';
     const { show } = useConfirmDialogStore();
-    const primaryPhoto = service?.photos?.[0];
+    const existingServicePhotos = service?.photos || [];
 
     const form = useForm<ServiceFormData>({
         customer_id: service?.customer_id ? String(service.customer_id) : '',
@@ -66,7 +68,8 @@ export function ServiceForm({ customers, laptops, serviceCategories, statuses, s
         completion_date: formatDateForInput(service?.completion_date),
         notes: service?.notes || '',
         parts: (service?.parts || []).map(formatPartForForm),
-        photo_path: primaryPhoto?.photo_path || '',
+        photos: [] as File[],
+        deleted_photos: [] as number[],
     });
 
     const statusOptions = statuses.map((status) => ({
@@ -85,7 +88,9 @@ export function ServiceForm({ customers, laptops, serviceCategories, statuses, s
         if (isEditMode) {
             handleUpdate();
         } else {
-            form.post(route('services.store'));
+            form.post(route('services.store'), {
+                forceFormData: true,
+            });
         }
     };
 
@@ -96,7 +101,9 @@ export function ServiceForm({ customers, laptops, serviceCategories, statuses, s
             variant: 'info',
             confirmText: t('common.confirm'),
             onConfirm: () => {
-                form.put(route('services.update', service!.id));
+                form.put(route('services.update', service!.id), {
+                    forceFormData: true,
+                });
             },
         });
     };
@@ -260,7 +267,15 @@ export function ServiceForm({ customers, laptops, serviceCategories, statuses, s
                     <CardTitle>{t('services.photo', { defaultValue: 'Photo' })}</CardTitle>
                 </CardHeader>
                 <CardBody className="space-y-6">
-                    <FieldInput id="photo_path" name="photo_path" label={t('services.photo_path', { defaultValue: 'Photo Path' })} value={form.data.photo_path} onChange={(e) => form.setData('photo_path', e.target.value)} placeholder={t('services.photo_path_placeholder', { defaultValue: 'Enter photo path' })} error={form.errors.photo_path} />
+                    <label className="mb-1 block text-sm font-medium">
+                        {t('services.photos', { defaultValue: 'Photos' })}
+                    </label>
+                    <PhotoUpload
+                        existingPhotos={existingServicePhotos.map((p) => ({ id: p.id, photo_path: p.photo_path, is_primary: false }))}
+                        onFilesChange={(files) => form.setData('photos', files)}
+                        onDeleteExisting={(id) => form.setData('deleted_photos', [...form.data.deleted_photos, id])}
+                        errors={form.errors.photos}
+                    />
                     <div className="flex justify-end gap-4">
                         <Link href={route('services.index')} className={cn(buttonVariants({ variant: 'secondary' }))}>
                             <LucideCircleX />
