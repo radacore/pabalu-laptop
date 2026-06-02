@@ -48,10 +48,11 @@ class ServiceCategoryController extends Controller
      */
     public function store(StoreServiceCategoryRequest $request): RedirectResponse
     {
-        $this->serviceCategoryService->store($request->validated());
+        $validated = $request->validated();
+        $this->serviceCategoryService->store($validated);
 
         return redirect()->route('service-categories.index')
-            ->with('success', __('flash.created', ['entity' => 'Service category']));
+            ->with('success', __('flash.created', ['entity' => __('entities.service_category').' "'.$validated['name'].'"']));
     }
 
     /**
@@ -70,9 +71,10 @@ class ServiceCategoryController extends Controller
     public function update(UpdateServiceCategoryRequest $request, ServiceCategory $serviceCategory): RedirectResponse
     {
         $this->serviceCategoryService->update($serviceCategory, $request->validated());
+        $serviceCategory->refresh();
 
         return redirect()->route('service-categories.index')
-            ->with('success', __('flash.updated', ['entity' => 'Service category']));
+            ->with('success', __('flash.updated', ['entity' => __('entities.service_category').' "'.$serviceCategory->name.'"']));
     }
 
     /**
@@ -80,11 +82,13 @@ class ServiceCategoryController extends Controller
      */
     public function destroy(ServiceCategory $serviceCategory): RedirectResponse
     {
+        $name = $serviceCategory->name;
+
         try {
             $this->serviceCategoryService->destroy($serviceCategory);
 
             return redirect()->route('service-categories.index')
-                ->with('success', __('flash.deleted', ['entity' => 'Service category']));
+                ->with('success', __('flash.deleted', ['entity' => __('entities.service_category').' "'.$name.'"']));
         } catch (\Exception $e) {
             return redirect()->route('service-categories.index')
                 ->with('error', $e->getMessage());

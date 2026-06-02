@@ -48,10 +48,11 @@ class LaptopSourceController extends Controller
      */
     public function store(StoreLaptopSourceRequest $request): RedirectResponse
     {
-        $this->laptopSourceService->store($request->validated());
+        $validated = $request->validated();
+        $this->laptopSourceService->store($validated);
 
         return redirect()->route('laptop-sources.index')
-            ->with('success', __('flash.created', ['entity' => 'Laptop source']));
+            ->with('success', __('flash.created', ['entity' => __('entities.laptop_source').' "'.$validated['name'].'"']));
     }
 
     /**
@@ -70,9 +71,10 @@ class LaptopSourceController extends Controller
     public function update(UpdateLaptopSourceRequest $request, LaptopSource $laptopSource): RedirectResponse
     {
         $this->laptopSourceService->update($laptopSource, $request->validated());
+        $laptopSource->refresh();
 
         return redirect()->route('laptop-sources.index')
-            ->with('success', __('flash.updated', ['entity' => 'Laptop source']));
+            ->with('success', __('flash.updated', ['entity' => __('entities.laptop_source').' "'.$laptopSource->name.'"']));
     }
 
     /**
@@ -80,11 +82,13 @@ class LaptopSourceController extends Controller
      */
     public function destroy(LaptopSource $laptopSource): RedirectResponse
     {
+        $name = $laptopSource->name;
+
         try {
             $this->laptopSourceService->destroy($laptopSource);
 
             return redirect()->route('laptop-sources.index')
-                ->with('success', __('flash.deleted', ['entity' => 'Laptop source']));
+                ->with('success', __('flash.deleted', ['entity' => __('entities.laptop_source').' "'.$name.'"']));
         } catch (\Exception $e) {
             return redirect()->route('laptop-sources.index')
                 ->with('error', $e->getMessage());

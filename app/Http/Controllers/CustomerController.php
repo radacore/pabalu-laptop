@@ -48,10 +48,12 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request): RedirectResponse
     {
-        $this->customerService->store($request->validated());
+        $validated = $request->validated();
+
+        $this->customerService->store($validated);
 
         return redirect()->route('customers.index')
-            ->with('success', __('flash.created', ['entity' => 'Customer']));
+            ->with('success', __('flash.created', ['entity' => __('entities.customer').' "'.$validated['name'].'"']));
     }
 
     /**
@@ -81,8 +83,10 @@ class CustomerController extends Controller
     {
         $this->customerService->update($customer, $request->validated());
 
+        $customer->refresh();
+
         return redirect()->route('customers.index')
-            ->with('success', __('flash.updated', ['entity' => 'Customer']));
+            ->with('success', __('flash.updated', ['entity' => __('entities.customer').' "'.$customer->name.'"']));
     }
 
     /**
@@ -93,6 +97,6 @@ class CustomerController extends Controller
         $this->customerService->destroy($customer);
 
         return redirect()->route('customers.index')
-            ->with('success', __('flash.deleted', ['entity' => 'Customer']));
+            ->with('success', __('flash.deleted', ['entity' => __('entities.customer').' "'.$customer->name.'"']));
     }
 }

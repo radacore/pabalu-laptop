@@ -48,10 +48,11 @@ class BrandController extends Controller
      */
     public function store(StoreBrandRequest $request): RedirectResponse
     {
-        $this->brandService->store($request->validated());
+        $validated = $request->validated();
+        $this->brandService->store($validated);
 
         return redirect()->route('brands.index')
-            ->with('success', __('flash.created', ['entity' => 'Brand']));
+            ->with('success', __('flash.created', ['entity' => __('entities.brand').' "'.$validated['name'].'"']));
     }
 
     /**
@@ -70,9 +71,10 @@ class BrandController extends Controller
     public function update(UpdateBrandRequest $request, Brand $brand): RedirectResponse
     {
         $this->brandService->update($brand, $request->validated());
+        $brand->refresh();
 
         return redirect()->route('brands.index')
-            ->with('success', __('flash.updated', ['entity' => 'Brand']));
+            ->with('success', __('flash.updated', ['entity' => __('entities.brand').' "'.$brand->name.'"']));
     }
 
     /**
@@ -80,11 +82,13 @@ class BrandController extends Controller
      */
     public function destroy(Brand $brand): RedirectResponse
     {
+        $name = $brand->name;
+
         try {
             $this->brandService->destroy($brand);
 
             return redirect()->route('brands.index')
-                ->with('success', __('flash.deleted', ['entity' => 'Brand']));
+                ->with('success', __('flash.deleted', ['entity' => __('entities.brand').' "'.$name.'"']));
         } catch (\Exception $e) {
             return redirect()->route('brands.index')
                 ->with('error', $e->getMessage());

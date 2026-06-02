@@ -37,7 +37,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('success', __('flash.updated', ['entity' => 'Profile']));
+        return Redirect::route('profile.edit')->with('success', __('flash.updated', ['entity' => __('entities.profile')]));
     }
 
     /**

@@ -49,10 +49,11 @@ class TransactionController extends Controller
      */
     public function store(StoreTransactionRequest $request): RedirectResponse
     {
-        $this->transactionService->store($request->validated());
+        $validated = $request->validated();
+        $this->transactionService->store($validated);
 
         return redirect()->route('transactions.index')
-            ->with('success', __('flash.created', ['entity' => 'Transaction']));
+            ->with('success', __('flash.created', ['entity' => __('entities.transaction').' "'.$validated['description'].'"']));
     }
 
     /**
@@ -71,9 +72,10 @@ class TransactionController extends Controller
     public function update(UpdateTransactionRequest $request, FinancialTransaction $transaction): RedirectResponse
     {
         $this->transactionService->update($transaction, $request->validated());
+        $transaction->refresh();
 
         return redirect()->route('transactions.index')
-            ->with('success', __('flash.updated', ['entity' => 'Transaction']));
+            ->with('success', __('flash.updated', ['entity' => __('entities.transaction').' "'.$transaction->description.'"']));
     }
 
     /**
@@ -81,11 +83,13 @@ class TransactionController extends Controller
      */
     public function destroy(FinancialTransaction $transaction): RedirectResponse
     {
+        $desc = $transaction->description;
+
         try {
             $this->transactionService->destroy($transaction);
 
             return redirect()->route('transactions.index')
-                ->with('success', __('flash.deleted', ['entity' => 'Transaction']));
+                ->with('success', __('flash.deleted', ['entity' => __('entities.transaction').' "'.$desc.'"']));
         } catch (\Exception $e) {
             return redirect()->route('transactions.index')
                 ->with('error', $e->getMessage());

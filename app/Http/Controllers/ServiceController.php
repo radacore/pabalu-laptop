@@ -58,10 +58,11 @@ class ServiceController extends Controller
      */
     public function store(StoreServiceRequest $request): RedirectResponse
     {
-        $this->serviceService->store($request->validated());
+        $validated = $request->validated();
+        $this->serviceService->store($validated);
 
         return redirect()->route('services.index')
-            ->with('success', __('flash.created', ['entity' => 'Service']));
+            ->with('success', __('flash.created', ['entity' => __('entities.service').' "'.$validated['tracking_code'].'"']));
     }
 
     /**
@@ -84,9 +85,10 @@ class ServiceController extends Controller
     public function update(UpdateServiceRequest $request, Service $service): RedirectResponse
     {
         $this->serviceService->update($service, $request->validated());
+        $service->refresh();
 
         return redirect()->route('services.index')
-            ->with('success', __('flash.updated', ['entity' => 'Service']));
+            ->with('success', __('flash.updated', ['entity' => __('entities.service').' "'.$service->tracking_code.'"']));
     }
 
     /**
@@ -94,11 +96,13 @@ class ServiceController extends Controller
      */
     public function destroy(Service $service): RedirectResponse
     {
+        $code = $service->tracking_code;
+
         try {
             $this->serviceService->destroy($service);
 
             return redirect()->route('services.index')
-                ->with('success', __('flash.deleted', ['entity' => 'Service']));
+                ->with('success', __('flash.deleted', ['entity' => __('entities.service').' "'.$code.'"']));
         } catch (\Exception $e) {
             return redirect()->route('services.index')
                 ->with('error', $e->getMessage());

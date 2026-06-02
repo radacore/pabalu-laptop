@@ -52,10 +52,11 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): RedirectResponse
     {
-        $this->userService->store($request->validated());
+        $validated = $request->validated();
+        $this->userService->store($validated);
 
         return redirect()->route('users.index')
-            ->with('success', __('flash.created', ['entity' => 'User']));
+            ->with('success', __('flash.created', ['entity' => __('entities.user').' "'.$validated['name'].'"']));
     }
 
     /**
@@ -90,9 +91,10 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         $this->userService->update($user, $request->validated());
+        $user->refresh();
 
         return redirect()->route('users.index')
-            ->with('success', __('flash.updated', ['entity' => 'User']));
+            ->with('success', __('flash.updated', ['entity' => __('entities.user').' "'.$user->name.'"']));
     }
 
     /**
@@ -100,11 +102,13 @@ class UserController extends Controller
      */
     public function destroy(User $user): RedirectResponse
     {
+        $name = $user->name;
+
         try {
             $this->userService->destroy($user);
 
             return redirect()->route('users.index')
-                ->with('success', __('flash.deleted', ['entity' => 'User']));
+                ->with('success', __('flash.deleted', ['entity' => __('entities.user').' "'.$name.'"']));
         } catch (\Exception $e) {
             return redirect()->route('users.index')
                 ->with('error', $e->getMessage());

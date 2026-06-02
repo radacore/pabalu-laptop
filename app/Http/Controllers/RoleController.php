@@ -51,10 +51,11 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request): RedirectResponse
     {
-        $this->roleService->store($request->validated());
+        $validated = $request->validated();
+        $this->roleService->store($validated);
 
         return redirect()->route('roles.index')
-            ->with('success', __('flash.created', ['entity' => 'Role']));
+            ->with('success', __('flash.created', ['entity' => __('entities.role').' "'.$validated['name'].'"']));
     }
 
     /**
@@ -88,9 +89,10 @@ class RoleController extends Controller
     public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
     {
         $this->roleService->update($role, $request->validated());
+        $role->refresh();
 
         return redirect()->route('roles.index')
-            ->with('success', __('flash.updated', ['entity' => 'Role']));
+            ->with('success', __('flash.updated', ['entity' => __('entities.role').' "'.$role->name.'"']));
     }
 
     /**
@@ -98,11 +100,13 @@ class RoleController extends Controller
      */
     public function destroy(Role $role): RedirectResponse
     {
+        $name = $role->name;
+
         try {
             $this->roleService->destroy($role);
 
             return redirect()->route('roles.index')
-                ->with('success', __('flash.deleted', ['entity' => 'Role']));
+                ->with('success', __('flash.deleted', ['entity' => __('entities.role').' "'.$name.'"']));
         } catch (\Exception $e) {
             return redirect()->route('roles.index')
                 ->with('error', $e->getMessage());

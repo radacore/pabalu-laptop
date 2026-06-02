@@ -23,9 +23,22 @@ class StoreCustomerRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20|unique:customers',
+            'phone' => [
+                'required',
+                'string',
+                'max:20',
+                'unique:customers',
+                'unique:users,phone',
+            ],
             'address' => 'nullable|string',
             'note' => 'nullable|string',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'phone.unique' => __('phone_number_taken'),
         ];
     }
 }

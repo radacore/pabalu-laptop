@@ -21,11 +21,26 @@ class UpdateCustomerRequest extends FormRequest
      */
     public function rules(): array
     {
+        $userId = $this->customer->user_id;
+
         return [
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20|unique:customers,phone,'.$this->customer->id,
+            'phone' => [
+                'required',
+                'string',
+                'max:20',
+                'unique:customers,phone,'.$this->customer->id,
+                'unique:users,phone'.($userId ? ','.$userId : ''),
+            ],
             'address' => 'nullable|string',
             'note' => 'nullable|string',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'phone.unique' => __('phone_number_taken'),
         ];
     }
 }

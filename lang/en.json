@@ -85,6 +85,7 @@
         "confirmed": "The confirmation does not match",
         "unique": "This value is already taken"
     },
+    "phone_number_taken": "This phone number is already registered",
     "navigation": {
         "dashboard": "Dashboard",
         "customer_dashboard": "My Dashboard",
@@ -470,6 +471,19 @@
         "created": ":entity created successfully.",
         "updated": ":entity updated successfully.",
         "deleted": ":entity deleted successfully."
+    },
+    "entities": {
+        "brand": "Brand",
+        "customer": "Customer",
+        "laptop": "Laptop",
+        "laptop_source": "Laptop source",
+        "permission": "Permission",
+        "profile": "Profile",
+        "role": "Role",
+        "service": "Service",
+        "service_category": "Service category",
+        "transaction": "Transaction",
+        "user": "User"
     },
     "services": {
         "title": "Services",

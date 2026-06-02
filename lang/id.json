@@ -85,6 +85,7 @@
         "confirmed": "Konfirmasi tidak cocok",
         "unique": "Nilai ini sudah digunakan"
     },
+    "phone_number_taken": "Nomor telepon ini sudah terdaftar",
     "navigation": {
         "dashboard": "Dashboard",
         "customer_dashboard": "Dashboard Saya",
@@ -557,6 +558,19 @@
         "deleted": "Transaksi berhasil dihapus",
         "created": "Transaksi berhasil dibuat",
         "updated": "Transaksi berhasil diperbarui"
+    },
+    "entities": {
+        "brand": "Merek",
+        "customer": "Pelanggan",
+        "laptop": "Laptop",
+        "laptop_source": "Sumber Laptop",
+        "permission": "Izin",
+        "profile": "Profil",
+        "role": "Peran",
+        "service": "Layanan",
+        "service_category": "Kategori Layanan",
+        "transaction": "Transaksi",
+        "user": "Pengguna"
     },
     "flash": {
         "success": "Berhasil",

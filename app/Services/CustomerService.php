@@ -121,6 +121,13 @@ class CustomerService extends BaseService
         return $customer;
     }
 
+    protected function beforeDestroy(Model $customer): void
+    {
+        if ($customer->user) {
+            $customer->user->delete();
+        }
+    }
+
     private function generateCustomerEmail(string $phone): string
     {
         $phoneKey = preg_replace('/[^A-Za-z0-9]+/', '', $phone) ?: Str::uuid()->toString();
