@@ -52,7 +52,7 @@ class TransactionController extends Controller
         $this->transactionService->store($request->validated());
 
         return redirect()->route('transactions.index')
-            ->with('success', __('Transaction created successfully.'));
+            ->with('success', __('flash.created', ['entity' => 'Transaction']));
     }
 
     /**
@@ -73,7 +73,7 @@ class TransactionController extends Controller
         $this->transactionService->update($transaction, $request->validated());
 
         return redirect()->route('transactions.index')
-            ->with('success', __('Transaction updated successfully.'));
+            ->with('success', __('flash.updated', ['entity' => 'Transaction']));
     }
 
     /**
@@ -85,7 +85,7 @@ class TransactionController extends Controller
             $this->transactionService->destroy($transaction);
 
             return redirect()->route('transactions.index')
-                ->with('success', __('Transaction deleted successfully.'));
+                ->with('success', __('flash.deleted', ['entity' => 'Transaction']));
         } catch (\Exception $e) {
             return redirect()->route('transactions.index')
                 ->with('error', $e->getMessage());

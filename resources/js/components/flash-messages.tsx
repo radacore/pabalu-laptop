@@ -2,6 +2,7 @@
 
 import { usePage } from '@inertiajs/react';
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toastManager } from '@/components/ui/toast';
 
 interface FlashData {
@@ -11,7 +12,15 @@ interface FlashData {
     info?: string;
 }
 
+const FLASH_TITLES: Record<string, string> = {
+    success: 'flash.success',
+    error: 'flash.error',
+    warning: 'flash.warning',
+    info: 'flash.info',
+};
+
 export function FlashMessages() {
+    const { t } = useTranslation();
     const props = usePage().props;
     const flash = (props as unknown as { flash?: FlashData }).flash;
     const lastFlashRef = useRef<string | null>(null);
@@ -33,17 +42,17 @@ export function FlashMessages() {
                 toastManager.add({
                     id: toastId,
                     type,
-                    title: type.charAt(0).toUpperCase() + type.slice(1),
+                    title: t(FLASH_TITLES[type]),
                     description: message,
                     timeout: 2500,
                     actionProps: {
-                        children: 'Dismiss',
+                        children: t('flash.dismiss'),
                         onClick: () => toastManager.close(toastId),
                     },
                 });
             }
         });
-    }, [flash]);
+    }, [flash, t]);
 
     return null;
 }

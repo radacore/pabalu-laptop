@@ -51,7 +51,7 @@ class PermissionController extends Controller
         $this->permissionService->store($request->validated());
 
         return redirect()->route('permissions.index')
-            ->with('success', 'Permission created successfully.');
+            ->with('success', __('flash.created', ['entity' => 'Permission']));
     }
 
     /**
@@ -84,7 +84,7 @@ class PermissionController extends Controller
         $this->permissionService->update($permission, $request->validated());
 
         return redirect()->route('permissions.index')
-            ->with('success', 'Permission updated successfully.');
+            ->with('success', __('flash.updated', ['entity' => 'Permission']));
     }
 
     /**
@@ -95,6 +95,6 @@ class PermissionController extends Controller
         $this->permissionService->destroy($permission);
 
         return redirect()->route('permissions.index')
-            ->with('success', 'Permission deleted successfully.');
+            ->with('success', __('flash.deleted', ['entity' => 'Permission']));
     }
 }

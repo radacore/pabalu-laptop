@@ -51,7 +51,7 @@ class BrandController extends Controller
         $this->brandService->store($request->validated());
 
         return redirect()->route('brands.index')
-            ->with('success', 'Brand created successfully.');
+            ->with('success', __('flash.created', ['entity' => 'Brand']));
     }
 
     /**
@@ -72,7 +72,7 @@ class BrandController extends Controller
         $this->brandService->update($brand, $request->validated());
 
         return redirect()->route('brands.index')
-            ->with('success', 'Brand updated successfully.');
+            ->with('success', __('flash.updated', ['entity' => 'Brand']));
     }
 
     /**
@@ -84,7 +84,7 @@ class BrandController extends Controller
             $this->brandService->destroy($brand);
 
             return redirect()->route('brands.index')
-                ->with('success', 'Brand deleted successfully.');
+                ->with('success', __('flash.deleted', ['entity' => 'Brand']));
         } catch (\Exception $e) {
             return redirect()->route('brands.index')
                 ->with('error', $e->getMessage());

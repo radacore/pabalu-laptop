@@ -55,7 +55,7 @@ class UserController extends Controller
         $this->userService->store($request->validated());
 
         return redirect()->route('users.index')
-            ->with('success', 'User created successfully.');
+            ->with('success', __('flash.created', ['entity' => 'User']));
     }
 
     /**
@@ -92,7 +92,7 @@ class UserController extends Controller
         $this->userService->update($user, $request->validated());
 
         return redirect()->route('users.index')
-            ->with('success', 'User updated successfully.');
+            ->with('success', __('flash.updated', ['entity' => 'User']));
     }
 
     /**
@@ -104,7 +104,7 @@ class UserController extends Controller
             $this->userService->destroy($user);
 
             return redirect()->route('users.index')
-                ->with('success', 'User deleted successfully.');
+                ->with('success', __('flash.deleted', ['entity' => 'User']));
         } catch (\Exception $e) {
             return redirect()->route('users.index')
                 ->with('error', $e->getMessage());

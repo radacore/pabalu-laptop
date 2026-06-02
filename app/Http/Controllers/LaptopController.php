@@ -58,7 +58,7 @@ class LaptopController extends Controller
         $this->laptopService->store($request->validated());
 
         return redirect()->route('laptops.index')
-            ->with('success', 'Laptop created successfully.');
+            ->with('success', __('flash.created', ['entity' => 'Laptop']));
     }
 
     /**
@@ -81,7 +81,7 @@ class LaptopController extends Controller
         $this->laptopService->update($laptop, $request->validated());
 
         return redirect()->route('laptops.index')
-            ->with('success', 'Laptop updated successfully.');
+            ->with('success', __('flash.updated', ['entity' => 'Laptop']));
     }
 
     /**
@@ -93,7 +93,7 @@ class LaptopController extends Controller
             $this->laptopService->destroy($laptop);
 
             return redirect()->route('laptops.index')
-                ->with('success', 'Laptop deleted successfully.');
+                ->with('success', __('flash.deleted', ['entity' => 'Laptop']));
         } catch (\Exception $e) {
             return redirect()->route('laptops.index')
                 ->with('error', $e->getMessage());

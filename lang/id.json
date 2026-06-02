@@ -557,5 +557,15 @@
         "deleted": "Transaksi berhasil dihapus",
         "created": "Transaksi berhasil dibuat",
         "updated": "Transaksi berhasil diperbarui"
+    },
+    "flash": {
+        "success": "Berhasil",
+        "error": "Gagal",
+        "warning": "Peringatan",
+        "info": "Informasi",
+        "dismiss": "Tutup",
+        "created": ":entity berhasil dibuat.",
+        "updated": ":entity berhasil diperbarui.",
+        "deleted": ":entity berhasil dihapus."
     }
 }

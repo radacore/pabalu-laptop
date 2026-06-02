@@ -61,7 +61,7 @@ class ServiceController extends Controller
         $this->serviceService->store($request->validated());
 
         return redirect()->route('services.index')
-            ->with('success', 'Service created successfully.');
+            ->with('success', __('flash.created', ['entity' => 'Service']));
     }
 
     /**
@@ -86,7 +86,7 @@ class ServiceController extends Controller
         $this->serviceService->update($service, $request->validated());
 
         return redirect()->route('services.index')
-            ->with('success', 'Service updated successfully.');
+            ->with('success', __('flash.updated', ['entity' => 'Service']));
     }
 
     /**
@@ -98,7 +98,7 @@ class ServiceController extends Controller
             $this->serviceService->destroy($service);
 
             return redirect()->route('services.index')
-                ->with('success', 'Service deleted successfully.');
+                ->with('success', __('flash.deleted', ['entity' => 'Service']));
         } catch (\Exception $e) {
             return redirect()->route('services.index')
                 ->with('error', $e->getMessage());

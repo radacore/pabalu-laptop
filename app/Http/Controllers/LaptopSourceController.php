@@ -51,7 +51,7 @@ class LaptopSourceController extends Controller
         $this->laptopSourceService->store($request->validated());
 
         return redirect()->route('laptop-sources.index')
-            ->with('success', 'Laptop source created successfully.');
+            ->with('success', __('flash.created', ['entity' => 'Laptop source']));
     }
 
     /**
@@ -72,7 +72,7 @@ class LaptopSourceController extends Controller
         $this->laptopSourceService->update($laptopSource, $request->validated());
 
         return redirect()->route('laptop-sources.index')
-            ->with('success', 'Laptop source updated successfully.');
+            ->with('success', __('flash.updated', ['entity' => 'Laptop source']));
     }
 
     /**
@@ -84,7 +84,7 @@ class LaptopSourceController extends Controller
             $this->laptopSourceService->destroy($laptopSource);
 
             return redirect()->route('laptop-sources.index')
-                ->with('success', 'Laptop source deleted successfully.');
+                ->with('success', __('flash.deleted', ['entity' => 'Laptop source']));
         } catch (\Exception $e) {
             return redirect()->route('laptop-sources.index')
                 ->with('error', $e->getMessage());

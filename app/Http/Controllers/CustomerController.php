@@ -51,7 +51,7 @@ class CustomerController extends Controller
         $this->customerService->store($request->validated());
 
         return redirect()->route('customers.index')
-            ->with('success', 'Customer created successfully.');
+            ->with('success', __('flash.created', ['entity' => 'Customer']));
     }
 
     /**
@@ -82,7 +82,7 @@ class CustomerController extends Controller
         $this->customerService->update($customer, $request->validated());
 
         return redirect()->route('customers.index')
-            ->with('success', 'Customer updated successfully.');
+            ->with('success', __('flash.updated', ['entity' => 'Customer']));
     }
 
     /**
@@ -93,6 +93,6 @@ class CustomerController extends Controller
         $this->customerService->destroy($customer);
 
         return redirect()->route('customers.index')
-            ->with('success', 'Customer deleted successfully.');
+            ->with('success', __('flash.deleted', ['entity' => 'Customer']));
     }
 }

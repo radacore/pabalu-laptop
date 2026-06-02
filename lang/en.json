@@ -461,6 +461,16 @@
         "503_message": "Sorry, we are doing some maintenance. Please check back soon.",
         "go_home": "Go Home"
     },
+    "flash": {
+        "success": "Success",
+        "error": "Error",
+        "warning": "Warning",
+        "info": "Info",
+        "dismiss": "Dismiss",
+        "created": ":entity created successfully.",
+        "updated": ":entity updated successfully.",
+        "deleted": ":entity deleted successfully."
+    },
     "services": {
         "title": "Services",
         "description": "Manage service requests, updates, parts, and photos",

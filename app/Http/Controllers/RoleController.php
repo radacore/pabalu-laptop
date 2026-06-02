@@ -54,7 +54,7 @@ class RoleController extends Controller
         $this->roleService->store($request->validated());
 
         return redirect()->route('roles.index')
-            ->with('success', 'Role created successfully.');
+            ->with('success', __('flash.created', ['entity' => 'Role']));
     }
 
     /**
@@ -90,7 +90,7 @@ class RoleController extends Controller
         $this->roleService->update($role, $request->validated());
 
         return redirect()->route('roles.index')
-            ->with('success', 'Role updated successfully.');
+            ->with('success', __('flash.updated', ['entity' => 'Role']));
     }
 
     /**
@@ -102,7 +102,7 @@ class RoleController extends Controller
             $this->roleService->destroy($role);
 
             return redirect()->route('roles.index')
-                ->with('success', 'Role deleted successfully.');
+                ->with('success', __('flash.deleted', ['entity' => 'Role']));
         } catch (\Exception $e) {
             return redirect()->route('roles.index')
                 ->with('error', $e->getMessage());
